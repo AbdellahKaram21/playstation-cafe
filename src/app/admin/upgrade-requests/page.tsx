@@ -8,6 +8,15 @@ import { redirect }          from 'next/navigation'
 import { planLabel }         from '@/lib/plans'
 import UpgradeRequestActions from './components/UpgradeRequestActions'
 
+// ── دالة مساعدة لتحويل الـ tenants بأمان ──
+function toTenant(raw: unknown): { id: string; name: string; plan: string } | null {
+  if (!raw) return null
+  // إذا كانت tenants قادمة كـ Array نأخذ العنصر الأول، وإلا نأخذها مباشرة
+  const obj = Array.isArray(raw) ? raw[0] : raw
+  if (!obj || typeof obj !== 'object') return null
+  return obj as { id: string; name: string; plan: string }
+}
+
 export default async function UpgradeRequestsPage() {
   const user = await getUser()
   if (user?.role !== 'super_admin') redirect('/dashboard')
@@ -50,8 +59,7 @@ export default async function UpgradeRequestsPage() {
         ) : (
           <div className="divide-y divide-yellow-500/10">
             {pending.map(req => {
-              const tenantRaw = req.tenants
-              const tenant = (Array.isArray(tenantRaw) ? tenantRaw[0] : tenantRaw) as { id: string; name: string; plan: string } | null
+              const tenant = toTenant(req.tenants)
               return (
                 <div key={req.id} className="px-5 py-4 flex items-center justify-between gap-3 flex-wrap">
                   <div className="space-y-1 min-w-0">
@@ -84,8 +92,7 @@ export default async function UpgradeRequestsPage() {
           </div>
           <div className="divide-y divide-white/5">
             {resolved.map(req => {
-              const tenantRaw = req.tenants
-              const tenant = (Array.isArray(tenantRaw) ? tenantRaw[0] : tenantRaw) as { id: string; name: string; plan: string } | null
+              const tenant = toTenant(req.tenants)
               return (
                 <div key={req.id} className="px-5 py-3.5 flex items-center justify-between gap-3">
                   <div className="space-y-0.5 min-w-0">
