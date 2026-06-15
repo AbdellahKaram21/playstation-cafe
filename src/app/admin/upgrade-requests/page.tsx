@@ -8,10 +8,10 @@ import { redirect }          from 'next/navigation'
 import { planLabel }         from '@/lib/plans'
 import UpgradeRequestActions from './components/UpgradeRequestActions'
 
-// ── دالة مساعدة لتحويل الـ tenants بأمان ──
+// ── helper: Supabase بيرجع tenants كـ array أو object حسب الـ join ──
+// بنحوّله لـ unknown الأول عشان TypeScript ميعترضش
 function toTenant(raw: unknown): { id: string; name: string; plan: string } | null {
   if (!raw) return null
-  // إذا كانت tenants قادمة كـ Array نأخذ العنصر الأول، وإلا نأخذها مباشرة
   const obj = Array.isArray(raw) ? raw[0] : raw
   if (!obj || typeof obj !== 'object') return null
   return obj as { id: string; name: string; plan: string }
