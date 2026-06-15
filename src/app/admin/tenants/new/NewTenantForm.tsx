@@ -7,7 +7,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createTenant } from '../actions'
+import { createTenant } from '../../actions'  // ✅ الـ path الصح — ارجع مجلدين لـ /admin/actions.ts
 
 // القيمة في DB لسه 'free' — بس في الـ UI بنعرضها كـ 'Normal'
 type Plan = 'free' | 'pro' | 'enterprise'
