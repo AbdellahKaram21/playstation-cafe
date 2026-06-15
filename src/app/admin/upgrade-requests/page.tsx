@@ -50,7 +50,8 @@ export default async function UpgradeRequestsPage() {
         ) : (
           <div className="divide-y divide-yellow-500/10">
             {pending.map(req => {
-              const tenant = req.tenants as { id: string; name: string; plan: string } | null
+              const tenantRaw = req.tenants
+              const tenant = (Array.isArray(tenantRaw) ? tenantRaw[0] : tenantRaw) as { id: string; name: string; plan: string } | null
               return (
                 <div key={req.id} className="px-5 py-4 flex items-center justify-between gap-3 flex-wrap">
                   <div className="space-y-1 min-w-0">
@@ -83,7 +84,8 @@ export default async function UpgradeRequestsPage() {
           </div>
           <div className="divide-y divide-white/5">
             {resolved.map(req => {
-              const tenant = req.tenants as { id: string; name: string; plan: string } | null
+              const tenantRaw = req.tenants
+              const tenant = (Array.isArray(tenantRaw) ? tenantRaw[0] : tenantRaw) as { id: string; name: string; plan: string } | null
               return (
                 <div key={req.id} className="px-5 py-3.5 flex items-center justify-between gap-3">
                   <div className="space-y-0.5 min-w-0">
