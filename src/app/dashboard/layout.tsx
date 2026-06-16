@@ -57,7 +57,7 @@ export default async function DashboardLayout({
     <div className="min-h-screen bg-[#0a0a0f] flex">
 
       {/* ===== SIDEBAR ===== */}
-      <SidebarNav userRole={user.role} />
+      <SidebarNav userRole={user.role as "owner" | "admin" | "cashier" | "super_admin"} />
 
       {/* ===== MAIN CONTENT ===== */}
       <div className="flex-1 flex flex-col min-w-0">
