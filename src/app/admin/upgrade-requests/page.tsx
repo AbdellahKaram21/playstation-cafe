@@ -2,14 +2,12 @@
 // FILE: src/app/admin/upgrade-requests/page.tsx
 // ============================================================
 
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createAdminClient } from '@/lib/supabase/server'  // ✅ من server.ts مش admin.ts
 import { getUser }           from '@/app/actions/auth'
 import { redirect }          from 'next/navigation'
 import { planLabel }         from '@/lib/plans'
 import UpgradeRequestActions from './components/UpgradeRequestActions'
 
-// ── helper: Supabase بيرجع tenants كـ array أو object حسب الـ join ──
-// بنحوّله لـ unknown الأول عشان TypeScript ميعترضش
 function toTenant(raw: unknown): { id: string; name: string; plan: string } | null {
   if (!raw) return null
   const obj = Array.isArray(raw) ? raw[0] : raw

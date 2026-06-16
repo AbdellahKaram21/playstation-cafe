@@ -187,8 +187,8 @@ export async function sellProduct(
   // ✅ TypeScript fix: الـ rpc بيتوقع string | undefined مش string | null
   // فبنحوّل null → undefined بـ ?? undefined
   const { error } = await supabase.rpc('sell_product', {
-    p_product_id: productId,
-    p_quantity:   quantity,
+    p_product_id: productId ?? undefined,
+    p_quantity:   quantity ?? undefined,
     p_session_id: sessionId ?? undefined,
   })
 
