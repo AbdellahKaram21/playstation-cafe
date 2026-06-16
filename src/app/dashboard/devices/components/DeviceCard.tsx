@@ -132,7 +132,7 @@ export default function DeviceCard({ device, activeSession, canManage }: Props) 
           startTime={activeSession.start_time}
           hourlyRate={activeSession.hourly_rate}
           productsTotal={activeSession.products_total ?? 0}
-          type={activeSession.type}
+          type={activeSession.type as "open" | "limited"}
           durationMinutes={activeSession.duration_minutes ?? null}
         />
       )}
