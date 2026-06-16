@@ -347,6 +347,50 @@ export type Database = {
         }
         Relationships: []
       }
+      upgrade_requests: {
+        Row: {
+          id: string
+          tenant_id: string
+          from_plan: string
+          to_plan: string
+          status: string
+          request_type: string
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          tenant_id: string
+          from_plan: string
+          to_plan: string
+          status?: string
+          request_type: string
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          tenant_id?: string
+          from_plan?: string
+          to_plan?: string
+          status?: string
+          request_type?: string
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "upgrade_requests_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
@@ -567,14 +611,15 @@ export const Constants = {
 // DOMAIN HELPER TYPES
 // ============================================================
 
-export type PlanLimits   = { plan: string; max_devices: number; max_staff: number; can_view_reports: boolean; can_export: boolean }
-export type Tenant       = Database['public']['Tables']['tenants']['Row']
-export type User         = Database['public']['Tables']['users']['Row']
-export type Device       = Database['public']['Tables']['devices']['Row']
-export type Session      = Database['public']['Tables']['sessions']['Row']
-export type Product      = Database['public']['Tables']['products']['Row']
-export type Sale         = Database['public']['Tables']['sales']['Row']
-export type Subscription = Database['public']['Tables']['subscriptions']['Row']
+export type PlanLimits     = { plan: string; max_devices: number; max_staff: number; can_view_reports: boolean; can_export: boolean }
+export type Tenant         = Database['public']['Tables']['tenants']['Row']
+export type User           = Database['public']['Tables']['users']['Row']
+export type Device         = Database['public']['Tables']['devices']['Row']
+export type Session        = Database['public']['Tables']['sessions']['Row']
+export type Product        = Database['public']['Tables']['products']['Row']
+export type Sale           = Database['public']['Tables']['sales']['Row']
+export type Subscription   = Database['public']['Tables']['subscriptions']['Row']
+export type UpgradeRequest = Database['public']['Tables']['upgrade_requests']['Row']
 
 export type DeviceInsert       = Database['public']['Tables']['devices']['Insert']
 export type DeviceUpdate       = Database['public']['Tables']['devices']['Update']
