@@ -38,7 +38,7 @@ export async function getPlanLimits(plan: string): Promise<PlanLimits> {
       .single()
 
     if (error || !data) return DEFAULT_LIMITS[plan] ?? DEFAULT_LIMITS.free
-    return data as PlanLimits
+    return data as unknown as PlanLimits
   } catch {
     return DEFAULT_LIMITS[plan] ?? DEFAULT_LIMITS.free
   }
