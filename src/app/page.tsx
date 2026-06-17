@@ -192,16 +192,16 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             {
-              name: 'Normal',
-              price: 'مجاناً',
-              period: '',
+              name: 'Normal 🔷',
+              price: '500 ج',
+              period: '/ شهر',
               features: ['10 أجهزة', '5 موظفين', 'تقارير أساسية', 'POS كامل'],
-              cta: 'ابدأ مجاناً',
+              cta: 'ابدأ دلوقتي',
               highlight: false,
             },
             {
               name: 'Pro 💜',
-              price: '199 ج',
+              price: '800 ج',
               period: '/ شهر',
               features: ['25 جهاز', '15 موظف', 'تقارير متقدمة', 'تصدير البيانات'],
               cta: 'اشترك في Pro',
@@ -211,7 +211,7 @@ export default function LandingPage() {
               name: 'Enterprise ⭐',
               price: 'تواصل معنا',
               period: '',
-              features: ['أجهزة غير محدودة', 'موظفين غير محدودين', 'دعم مخصص', 'سلاسل الكافيهات'],
+              features: ['أجهزة غير محدودة', 'موظفين غير محدودين', 'دعم مخصص 24/7', 'سلاسل الكافيهات'],
               cta: 'تواصل معنا',
               highlight: false,
             },
