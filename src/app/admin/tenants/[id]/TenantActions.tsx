@@ -199,44 +199,45 @@ export default function TenantActions({
         </div>
       )}
 
-      {/* ── منطقة الخطر — للـ suspended و pending بس ── */}
-      {currentStatus !== 'active' && (
-        <div className="rounded-xl border border-red-500/10 bg-red-500/5 p-5">
-          <h3 className="text-sm font-semibold text-red-400 mb-2">منطقة الخطر</h3>
+      {/* ── منطقة الخطر ── */}
+      <div className="rounded-xl border border-red-500/10 bg-red-500/5 p-5">
+        <h3 className="text-sm font-semibold text-red-400 mb-2">منطقة الخطر</h3>
 
-          {/* Soft Delete */}
-          <p className="text-xs text-gray-500 mb-3">
-            إخفاء الكافيه من القائمة. البيانات التاريخية ستظل محفوظة.
-          </p>
-          <button
-            onClick={handleDelete}
-            disabled={loadingDelete}
-            className="w-full py-2.5 rounded-lg text-sm font-medium transition-all mb-3
-                       bg-orange-600/20 hover:bg-orange-600/30 text-orange-400
-                       border border-orange-500/30
-                       disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {loadingDelete ? 'جاري الحذف...' : '🗂 إخفاء الكافيه'}
-          </button>
-
-          {/* Hard Delete */}
-          <div className="border-t border-red-500/10 pt-3">
+        {/* Soft Delete — بس للـ suspended و pending */}
+        {currentStatus !== 'active' && (
+          <>
             <p className="text-xs text-gray-500 mb-3">
-              حذف كامل نهائي — كل البيانات والمستخدمين والإيميلات هتتمسح نهائياً.
+              إخفاء الكافيه من القائمة. البيانات التاريخية ستظل محفوظة.
             </p>
             <button
-              onClick={handleHardDelete}
-              disabled={loadingHard}
-              className="w-full py-2.5 rounded-lg text-sm font-medium transition-all
-                         bg-red-600/30 hover:bg-red-600/50 text-red-400
-                         border border-red-500/40
+              onClick={handleDelete}
+              disabled={loadingDelete}
+              className="w-full py-2.5 rounded-lg text-sm font-medium transition-all mb-3
+                         bg-orange-600/20 hover:bg-orange-600/30 text-orange-400
+                         border border-orange-500/30
                          disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {loadingHard ? 'جاري الحذف النهائي...' : '🗑 حذف نهائي كامل'}
+              {loadingDelete ? 'جاري الحذف...' : '🗂 إخفاء الكافيه'}
             </button>
-          </div>
-        </div>
-      )}
+            <div className="border-t border-red-500/10 mb-3" />
+          </>
+        )}
+
+        {/* Hard Delete — متاح لكل الحالات */}
+        <p className="text-xs text-gray-500 mb-3">
+          حذف كامل نهائي — كل البيانات والمستخدمين والإيميلات هتتمسح نهائياً.
+        </p>
+        <button
+          onClick={handleHardDelete}
+          disabled={loadingHard}
+          className="w-full py-2.5 rounded-lg text-sm font-medium transition-all
+                     bg-red-600/30 hover:bg-red-600/50 text-red-400
+                     border border-red-500/40
+                     disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {loadingHard ? 'جاري الحذف النهائي...' : '🗑 حذف نهائي كامل'}
+        </button>
+      </div>
 
     </div>
   )
