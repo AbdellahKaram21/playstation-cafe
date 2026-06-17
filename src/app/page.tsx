@@ -76,7 +76,7 @@ export default function LandingPage() {
             className="px-8 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-700
                        text-white font-semibold text-sm transition-all
                        shadow-lg shadow-purple-900/40">
-            ابدأ تجربتك المجانية ←
+            ابدأ تجربتك دلوقتي ←
           </Link>
           <Link href="/login"
             className="px-8 py-3.5 rounded-xl border border-white/10 bg-white/5
