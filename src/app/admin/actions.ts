@@ -34,16 +34,20 @@ export async function getTenants() {
   const { data: userCounts }   = await admin.from('users').select('tenant_id')
   const { data: deviceCounts } = await admin.from('devices').select('tenant_id').eq('is_deleted', false)
   const { data: subscriptions } = await admin.from('subscriptions').select('tenant_id, plan, status, start_date, end_date').eq('status', 'active')
+  // إيميل الـ owner بتاع كل tenant
+  const { data: owners } = await admin.from('users').select('tenant_id, email').eq('role', 'owner')
 
   const userCountMap   = (userCounts   ?? []).reduce<Record<string, number>>((acc, u) => { acc[u.tenant_id] = (acc[u.tenant_id] ?? 0) + 1; return acc }, {})
   const deviceCountMap = (deviceCounts ?? []).reduce<Record<string, number>>((acc, d) => { acc[d.tenant_id] = (acc[d.tenant_id] ?? 0) + 1; return acc }, {})
   const subMap         = (subscriptions ?? []).reduce<Record<string, any>>((acc, s)   => { if (s) acc[s.tenant_id] = s; return acc }, {})
+  const ownerMap       = (owners        ?? []).reduce<Record<string, string>>((acc, o) => { acc[o.tenant_id] = o.email; return acc }, {})
 
   return (tenants ?? []).map(tenant => ({
     ...tenant,
     userCount:    userCountMap[tenant.id]   ?? 0,
     deviceCount:  deviceCountMap[tenant.id] ?? 0,
     subscription: subMap[tenant.id]         ?? null,
+    ownerEmail:   ownerMap[tenant.id]       ?? null,
   }))
 }
 

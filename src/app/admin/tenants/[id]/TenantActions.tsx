@@ -9,7 +9,7 @@
 
 import { useState }    from 'react'
 import { useRouter }   from 'next/navigation'
-import { updateTenantStatus, updateSubscriptionPlan, softDeleteTenant, activateTenant } from '../../actions'
+import { updateTenantStatus, updateSubscriptionPlan, softDeleteTenant, hardDeleteTenant, activateTenant } from '../../actions'
 import { planLabel }   from '@/lib/plan-utils'
 
 type Plan = 'free' | 'pro' | 'enterprise'
@@ -28,6 +28,7 @@ export default function TenantActions({
   const [loadingStatus,   setLoadingStatus]   = useState(false)
   const [loadingPlan,     setLoadingPlan]     = useState(false)
   const [loadingDelete,   setLoadingDelete]   = useState(false)
+  const [loadingHard,     setLoadingHard]     = useState(false)
   const [loadingActivate, setLoadingActivate] = useState(false)
   const [selectedPlan,    setSelectedPlan]    = useState<Plan>(currentPlan as Plan)
 
@@ -79,6 +80,23 @@ export default function TenantActions({
       alert('حدث خطأ، حاول مرة أخرى')
     } finally {
       setLoadingPlan(false)
+    }
+  }
+
+  // ── حذف نهائي كامل ───────────────────────────────────────
+  async function handleHardDelete() {
+    if (!confirm('🔴 حذف نهائي كامل؟\n\nكل البيانات (جلسات، مبيعات، موظفين، auth.users) هتتمسح نهائياً والإيميل هيتحرر.')) return
+    if (!confirm('⚠️ تأكيد أخير — مفيش رجعة خالص. هتكمل الحذف؟')) return
+
+    setLoadingHard(true)
+    try {
+      const result = await hardDeleteTenant(tenantId)
+      if (result.error) { alert(result.error); return }
+      router.push('/admin/tenants')
+    } catch {
+      alert('حدث خطأ، حاول مرة أخرى')
+    } finally {
+      setLoadingHard(false)
     }
   }
 
@@ -181,23 +199,42 @@ export default function TenantActions({
         </div>
       )}
 
-      {/* ── حذف — للـ suspended و pending بس ── */}
+      {/* ── منطقة الخطر — للـ suspended و pending بس ── */}
       {currentStatus !== 'active' && (
         <div className="rounded-xl border border-red-500/10 bg-red-500/5 p-5">
           <h3 className="text-sm font-semibold text-red-400 mb-2">منطقة الخطر</h3>
-          <p className="text-xs text-gray-500 mb-4">
-            حذف الكافيه من القائمة. البيانات التاريخية ستظل محفوظة.
+
+          {/* Soft Delete */}
+          <p className="text-xs text-gray-500 mb-3">
+            إخفاء الكافيه من القائمة. البيانات التاريخية ستظل محفوظة.
           </p>
           <button
             onClick={handleDelete}
             disabled={loadingDelete}
-            className="w-full py-2.5 rounded-lg text-sm font-medium transition-all
-                       bg-red-600/20 hover:bg-red-600/30 text-red-400
-                       border border-red-500/30
+            className="w-full py-2.5 rounded-lg text-sm font-medium transition-all mb-3
+                       bg-orange-600/20 hover:bg-orange-600/30 text-orange-400
+                       border border-orange-500/30
                        disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {loadingDelete ? 'جاري الحذف...' : '🗑 حذف الكافيه'}
+            {loadingDelete ? 'جاري الحذف...' : '🗂 إخفاء الكافيه'}
           </button>
+
+          {/* Hard Delete */}
+          <div className="border-t border-red-500/10 pt-3">
+            <p className="text-xs text-gray-500 mb-3">
+              حذف كامل نهائي — كل البيانات والمستخدمين والإيميلات هتتمسح نهائياً.
+            </p>
+            <button
+              onClick={handleHardDelete}
+              disabled={loadingHard}
+              className="w-full py-2.5 rounded-lg text-sm font-medium transition-all
+                         bg-red-600/30 hover:bg-red-600/50 text-red-400
+                         border border-red-500/40
+                         disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {loadingHard ? 'جاري الحذف النهائي...' : '🗑 حذف نهائي كامل'}
+            </button>
+          </div>
         </div>
       )}
 

@@ -6,7 +6,7 @@
 import { useState, useMemo } from 'react'
 import Link                  from 'next/link'
 import { useRouter }         from 'next/navigation'
-import { softDeleteTenant }  from '../actions'
+import { softDeleteTenant, hardDeleteTenant } from '../actions'
 
 type Subscription = {
   plan:       string
@@ -24,6 +24,7 @@ type TenantRow = {
   userCount:    number
   deviceCount:  number
   subscription: Subscription
+  ownerEmail:   string | null
 }
 
 type FilterStatus = 'all' | 'active' | 'suspended' | 'pending'
@@ -38,6 +39,7 @@ export default function TenantsClient({ tenants }: Props) {
   const [filterStatus, setFilterStatus] = useState<FilterStatus>('all')
   const [filterPlan,   setFilterPlan]   = useState<FilterPlan>('all')
   const [deletingId,   setDeletingId]   = useState<string | null>(null)
+  const [hardDeleteId, setHardDeleteId] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
     return tenants.filter(t => {
@@ -83,6 +85,27 @@ export default function TenantsClient({ tenants }: Props) {
       alert('حدث خطأ، حاول مرة أخرى')
     } finally {
       setDeletingId(null)
+    }
+  }
+
+  async function handleHardDelete(e: React.MouseEvent, tenantId: string, tenantName: string) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const ok1 = confirm(`🔴 حذف نهائي لـ "${tenantName}"؟\n\nكل البيانات (جلسات، مبيعات، موظفين) هتتمسح للأبد.`)
+    if (!ok1) return
+    const ok2 = confirm(`⚠️ تأكيد أخير — مفيش رجعة:\nهتحذف "${tenantName}" وكل بياناته نهائياً.`)
+    if (!ok2) return
+
+    setHardDeleteId(tenantId)
+    try {
+      const result = await hardDeleteTenant(tenantId)
+      if (result.error) { alert(result.error) }
+      else { router.refresh() }
+    } catch {
+      alert('حدث خطأ، حاول مرة أخرى')
+    } finally {
+      setHardDeleteId(null)
     }
   }
 
@@ -246,6 +269,10 @@ export default function TenantsClient({ tenants }: Props) {
                       {search.trim() ? highlightMatch(tenant.name, search) : tenant.name}
                     </p>
                     <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                      {/* إيميل صاحب الكافيه */}
+                      {tenant.ownerEmail && (
+                        <span className="text-xs text-gray-500 truncate">✉️ {tenant.ownerEmail}</span>
+                      )}
                       <span className="text-xs text-gray-500">👥 {tenant.userCount} مستخدم</span>
                       <span className="text-xs text-gray-500">🎮 {tenant.deviceCount} جهاز</span>
                       {tenant.subscription?.end_date
@@ -263,19 +290,33 @@ export default function TenantsClient({ tenants }: Props) {
                       {status.label}
                     </span>
 
+                    {/* Soft Delete — بس للـ suspended/pending */}
                     {tenant.status !== 'active' && (
                       <button
                         onClick={(e) => handleDelete(e, tenant.id, tenant.name)}
-                        disabled={isDeleting}
-                        title="حذف الكافيه"
+                        disabled={!!deletingId}
+                        title="إخفاء الكافيه (soft delete)"
                         className="w-7 h-7 flex items-center justify-center rounded-lg
-                                   text-gray-600 hover:text-red-400 hover:bg-red-500/10
-                                   border border-transparent hover:border-red-500/20
+                                   text-gray-600 hover:text-orange-400 hover:bg-orange-500/10
+                                   border border-transparent hover:border-orange-500/20
                                    transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm"
                       >
-                        {isDeleting ? '⏳' : '🗑'}
+                        {deletingId === tenant.id ? '⏳' : '🗂'}
                       </button>
                     )}
+
+                    {/* Hard Delete — متاح دايماً للـ super_admin */}
+                    <button
+                      onClick={(e) => handleHardDelete(e, tenant.id, tenant.name)}
+                      disabled={!!hardDeleteId}
+                      title="حذف نهائي كامل"
+                      className="w-7 h-7 flex items-center justify-center rounded-lg
+                                 text-gray-600 hover:text-red-400 hover:bg-red-500/10
+                                 border border-transparent hover:border-red-500/20
+                                 transition-all disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                    >
+                      {hardDeleteId === tenant.id ? '⏳' : '🗑'}
+                    </button>
 
                     <span className="text-gray-600 group-hover:text-gray-400 transition-colors">←</span>
                   </div>
